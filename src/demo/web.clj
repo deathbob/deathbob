@@ -3,7 +3,7 @@
 
 (defn app [req]
   {:status 200
-   :headers {"Content-Type" "text/plain"}
+   :headers {"Content-Type" "text/plain" "x-hello-bob" "Bob says hello!"}
    :body "Hello Bob!\n"})
 
 (defn -main []
