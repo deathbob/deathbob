@@ -1,4 +1,4 @@
-(ns demo.web
+(ns deathbob.web
   (:use ring.adapter.jetty))
 
 (defn app [req]
