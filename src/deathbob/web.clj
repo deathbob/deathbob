@@ -1,11 +1,19 @@
 (ns deathbob.web
+  (:use compojure.core)
+  (:require [compojure.route :as route]
+            [compojure.handler :as handler])
+  (:require [net.cgrand.enlive-html :as html])
   (:use ring.adapter.jetty))
 
-(defn app [req]
-  {:status 200
-   :headers {"Content-Type" "text/plain" "x-hello-bob" "Bob says hello!"}
-   :body "Hello Bob!\n"})
+(html/deftemplate index "deathbob/template1.html"
+  [ctxt]
+  [:div#message] (html/content (:message ctxt)))
+
+
+(defroutes main-routes
+  (GET "/" {params :params} (index params))
+  (route/not-found "<h1>Page not found</h1>"))
 
 (defn -main []
   (let [port (Integer/parseInt (System/getenv "PORT"))]
-    (run-jetty app {:port port})))
+    (run-jetty (handler/site main-routes) {:port port})))
