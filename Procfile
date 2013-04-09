@@ -1,1 +1,1 @@
-web: lein run -m deathbob.web
+web: lein ring server

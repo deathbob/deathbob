@@ -1,4 +1,4 @@
-(ns deathbob.web
+(ns deathbob.handler
   (:use compojure.core)
   (:require [compojure.route :as route]
             [compojure.handler :as handler])
@@ -14,6 +14,8 @@
   (GET "/" {params :params} (index params))
   (route/not-found "<h1>Page not found</h1>"))
 
-(defn -main []
-  (let [port (Integer/parseInt (System/getenv "PORT"))]
-    (run-jetty (handler/site main-routes) {:port port})))
+
+
+
+(def app
+  (handler/site main-routes))
