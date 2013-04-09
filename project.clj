@@ -8,4 +8,4 @@
                  ]
   :plugins [[lein-ring "0.8.3"]]
   :ring {:handler deathbob.handler/app}
-  :main deathbob.web)
+  :main deathbob.handler)

@@ -18,14 +18,14 @@
 
         function get_location(){
           navigator.geolocation.watchPosition(show_map, handle_error, opts);
-//          navigator.geolocation.getCurrentPosition(show_map, handle_error, opts);
         }
         function show_map(position){
+
           lat = position.coords.latitude;
           lng = position.coords.longitude;
           localStorage["lat"] = lat;
           localStorage["lng"] = lng;
-
+          newLatLng = new google.maps.LatLng(lat, lng);
           if (marker != undefined){
             marker.setPosition(newLatLng);
           }else{
@@ -44,6 +44,7 @@
           }
 
         }
+
       get_location();
 
       var map;

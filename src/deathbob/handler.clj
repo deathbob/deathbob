@@ -19,3 +19,8 @@
 
 (def app
   (handler/site main-routes))
+
+
+(defn -main []
+  (let [port (Integer/parseInt (System/getenv "PORT"))]
+    (run-jetty (handler/site main-routes) {:port port})))
