@@ -1,1 +1,1 @@
-web: lein run -m deathbob.handler
+web: lein run

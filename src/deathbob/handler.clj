@@ -22,5 +22,5 @@
 
 
 (defn -main []
-  (let [port (Integer/parseInt (System/getenv "PORT"))]
+  (let [port (Integer/parseInt (or (System/getenv "PORT") "3001"))]
     (run-jetty (handler/site main-routes) {:port port})))
