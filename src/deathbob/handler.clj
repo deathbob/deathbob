@@ -10,11 +10,16 @@
   [ctxt]
   [:div#message] (html/content (:message ctxt)))
 
+(defn position-handler [req]
+  (with-channel req channel
+    (on-close channel (fn [status] (println "channel closed: " status)))
+    (on-receive channel (fn [data]
+                          (send! channel data)))))
 
 (defroutes main-routes
   (GET "/" {params :params} (index params))
+  (GET "/ws" [] position-handler)
   (route/not-found "<h1>Page not found</h1>"))
-
 
 
 
@@ -23,5 +28,4 @@
 
 
 (defn -main []
-  (let [port (Integer/parseInt (or (System/getenv "PORT") "3001"))]
-    (run-jetty (handler/site main-routes) {:port port})))
+  (run-server (handler/site #'main-routes) {:port 8080}))

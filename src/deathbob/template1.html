@@ -37,6 +37,25 @@
           };
           map.panTo(newLatLng);
 
+          if(window.websocket === undefined){
+            window.websocket = new WebSocket("ws://localhost:8080/ws")
+            window.websocket.onmessage = function(message){
+              try {
+                  var json = JSON.parse(message.data);
+              } catch (e) {
+                  console.log('This doesn\'t look like a valid JSON: ', message);
+                  return;
+              }
+            }
+          }
+
+        if (window.websocket.readyState == 1){
+          window.websocket.send({lat: lat, lng: lng});
+        }else{
+        console.log("websocket not open");
+        }
+
+
           console.log(lat);
           console.log(lng);
         }
