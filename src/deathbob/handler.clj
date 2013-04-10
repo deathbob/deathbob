@@ -1,5 +1,6 @@
 (ns deathbob.handler
   (:use compojure.core)
+  (:use org.httpkit.server)
   (:require [compojure.route :as route]
             [compojure.handler :as handler])
   (:require [net.cgrand.enlive-html :as html])

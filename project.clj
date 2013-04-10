@@ -5,6 +5,7 @@
                  [ring/ring-jetty-adapter "1.1.0"]
                  [compojure "1.1.5"]
                  [enlive "1.0.1"]
+                 [http-kit "2.0.0"]
                  ]
   :plugins [[lein-ring "0.8.3"]]
   :min-lein-version "2.0.0"
