@@ -16,13 +16,14 @@
         var myLatlng = new google.maps.LatLng(lat, lng);
         var opts = {enableHighAccuracy: true, maximumAge: 5000}
         var markerBounds = new google.maps.LatLngBounds();
-
+        var map;
         var name = prompt("Who are you?", "nobody");
         var markers = [];
 
         function get_location(){
           navigator.geolocation.watchPosition(show_map, handle_error, opts);
         }
+
         function show_map(position){
 
           lat = position.coords.latitude;
@@ -30,17 +31,7 @@
           localStorage["lat"] = lat;
           localStorage["lng"] = lng;
           newLatLng = new google.maps.LatLng(lat, lng);
-//          if (marker != undefined){
-//            marker.setPosition(newLatLng);
-//          }else{
-//            marker = new google.maps.Marker({
-//              position: newLatLng,
-//              map: map,
-//              title:"You"
-//            });
-//          };
-//          map.panTo(newLatLng);
-//
+
           if(window.websocket === undefined){
             openWebsocket();
           }
@@ -60,6 +51,7 @@
         function sendData(){
           websocket.send("name " + name + " lat " + lat + " lng " + lng);
         }
+
         function find_index_of_name_in_markers(name){
           for(var i = 0; i < markers.length; i++){
             if(markers[i].title === name) return i;
@@ -69,7 +61,8 @@
 
 
         function openWebsocket(){
-            window.websocket = new WebSocket("ws://localhost:8080/ws")
+            var url = document.URL
+            window.websocket = new WebSocket(url.replace("http", "ws") + "ws");
             window.websocket.onmessage = function(message){
               try {
                   var json = JSON.parse(message.data);
@@ -83,8 +76,13 @@
                   }else{
                     markers[idx].setPosition(pos);
                   }
-                  markerBounds.extend(pos);
-                  map.fitBounds(markerBounds);
+                  if(markerBounds.contains(pos)){
+                    // do nothing
+                  }else{
+                    markerBounds.extend(pos);
+                    map.fitBounds(markerBounds);
+                  }
+
               } catch (e) {
                   console.log("This doesn't look like a valid JSON: ", message);
                   return;
@@ -95,12 +93,7 @@
           if (err.code == 1){
           // user said no
           }
-
         }
-
-      get_location();
-
-      var map;
 
       function initialize() {
         mapOptions = {
@@ -109,15 +102,10 @@
           mapTypeId: google.maps.MapTypeId.ROADMAP
         };
         map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
-//        marker = new google.maps.Marker({
-//          position: myLatlng,
-//          map: map,
-//          title:"You"
-//        });
       }
 
       google.maps.event.addDomListener(window, 'load', initialize);
-
+      get_location();
     </script>
 
   </head>
