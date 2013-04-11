@@ -15,6 +15,10 @@
         var lng = localStorage["lng"] || -73.0;
         var myLatlng = new google.maps.LatLng(lat, lng);
         var opts = {enableHighAccuracy: true, maximumAge: 5000}
+        var markerBounds = new google.maps.LatLngBounds();
+
+        var name = prompt("Who are you?", "nobody");
+        var markers = [];
 
         function get_location(){
           navigator.geolocation.watchPosition(show_map, handle_error, opts);
@@ -26,38 +30,66 @@
           localStorage["lat"] = lat;
           localStorage["lng"] = lng;
           newLatLng = new google.maps.LatLng(lat, lng);
-          if (marker != undefined){
-            marker.setPosition(newLatLng);
-          }else{
-            marker = new google.maps.Marker({
-              position: newLatLng,
-              map: map,
-              title:"You"
-            });
-          };
-          map.panTo(newLatLng);
-
+//          if (marker != undefined){
+//            marker.setPosition(newLatLng);
+//          }else{
+//            marker = new google.maps.Marker({
+//              position: newLatLng,
+//              map: map,
+//              title:"You"
+//            });
+//          };
+//          map.panTo(newLatLng);
+//
           if(window.websocket === undefined){
+            openWebsocket();
+          }
+
+          if (window.websocket.readyState == 1){
+            sendData();
+          }else if(window.websocket.readyState === 3){
+            window.websocket.close();
+            openWebsocket();
+            console.log("websocket not open");
+          }
+
+          console.log(lat);
+          console.log(lng);
+        }
+
+        function sendData(){
+          websocket.send("name " + name + " lat " + lat + " lng " + lng);
+        }
+        function find_index_of_name_in_markers(name){
+          for(var i = 0; i < markers.length; i++){
+            if(markers[i].title === name) return i;
+          }
+          return -1;
+        }
+
+
+        function openWebsocket(){
             window.websocket = new WebSocket("ws://localhost:8080/ws")
             window.websocket.onmessage = function(message){
               try {
                   var json = JSON.parse(message.data);
+                  var name = json.name;
+                  var idx = find_index_of_name_in_markers(name);
+                  var pos = new google.maps.LatLng(json.lat, json.lng);
+                  if(idx === -1){
+                    // couldn't find existing marker, make a new one
+                    var mark = new google.maps.Marker({position: pos , map: map, title: json.name})
+                    markers.push(mark);
+                  }else{
+                    markers[idx].setPosition(pos);
+                  }
+                  markerBounds.extend(pos);
+                  map.fitBounds(markerBounds);
               } catch (e) {
-                  console.log('This doesn\'t look like a valid JSON: ', message);
+                  console.log("This doesn't look like a valid JSON: ", message);
                   return;
               }
             }
-          }
-
-        if (window.websocket.readyState == 1){
-          window.websocket.send({lat: lat, lng: lng});
-        }else{
-        console.log("websocket not open");
-        }
-
-
-          console.log(lat);
-          console.log(lng);
         }
         function handle_error(err){
           if (err.code == 1){
@@ -77,11 +109,11 @@
           mapTypeId: google.maps.MapTypeId.ROADMAP
         };
         map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
-        marker = new google.maps.Marker({
-          position: myLatlng,
-          map: map,
-          title:"You"
-        });
+//        marker = new google.maps.Marker({
+//          position: myLatlng,
+//          map: map,
+//          title:"You"
+//        });
       }
 
       google.maps.event.addDomListener(window, 'load', initialize);

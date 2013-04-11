@@ -1,0 +1,50 @@
+(doc atom)
+#{}
+(atom #{})
+(def foo (atom #{}))
+foo
+(doc swap)
+(doc atom/swap)
+(doc val)
+(doc var)
+(doc agent)
+(def foo {:bob [1,3])}
+(def foo {:bob [1,3]}
+)
+foo
+(foo :bob)
+(def foo ["name" "nobody" "lat" "40.714352999999996" "lng" "-74.005973"])
+foo
+(hash-map foo)
+(apply (hash-map foo))
+(apply hash-map foo)
+((apply hash-map foo) "lat")
+(assoc {:key 'val'} :key 'poop')
+(def foo {"Key" ["value" 3]})
+foo
+(defn bar [key value] 
+(println key)
+(println value))
+(bar foo)
+(defn bar [&args] 
+(let [key (first args)
+value (rest args)]
+(println key)
+))
+(defn bar [arg]
+(let [key (first args)]
+(println key)))
+(defn bar [arg]
+(let [key (first arg)]
+(println key)))
+(bar foo)
+(defn bar [arg]
+)
+(defn bar [[channel [lat lng]]]
+(println lat))
+(bar foo)
+foo
+(bar (vec foo))
+(vec foo)
+(defn bar [{channel [lat lng]}] (println lat))
+(defn bar [[channel [lat lng]]] (println lat))

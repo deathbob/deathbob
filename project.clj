@@ -6,6 +6,7 @@
                  [compojure "1.1.5"]
                  [enlive "1.0.1"]
                  [http-kit "2.0.0"]
+                 [org.clojure/data.json "0.2.2"]
                  ]
   :plugins [[lein-ring "0.8.3"]]
   :min-lein-version "2.0.0"
