@@ -79,8 +79,7 @@
 
 
         function openWebsocket(){
-            var url = document.URL
-            window.websocket = new WebSocket(url.replace("http", "ws") + "ws");
+            window.websocket = new WebSocket("ws://" + document.domain + "/ws");
             window.websocket.onmessage = function(message){
               try {
                   var json = JSON.parse(message.data);
