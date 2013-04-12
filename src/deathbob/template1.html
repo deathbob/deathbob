@@ -109,10 +109,10 @@
           mapTypeId: google.maps.MapTypeId.ROADMAP
         };
         map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
+        get_location();
       }
 
       google.maps.event.addDomListener(window, 'load', initialize);
-      get_location();
     </script>
 
   </head>
