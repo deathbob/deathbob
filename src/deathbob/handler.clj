@@ -26,7 +26,8 @@
                             (println (str name " " lat " " lng))
                             (swap! coords assoc channel [lat lng name])
                             (println @coords)
-                            (doall (map (fn[x](send! (first x) (json/write-str {:name name :lat lat :lng lng}) )) @coords))
+                            (let [json (json/write-str {:name name :lat lat :lng lng})]
+                              (doall (map (fn[x](send! x json)) (keys @coords))))
                             )))))
 
 

@@ -56,15 +56,15 @@
           var idx = find_index_of_name_in_markers(name);
           if(idx === -1){
             // couldn't find existing marker, make a new one
-            var mark = new google.maps.Marker({position: pos , map: map, title: json.name})
+            var mark = new google.maps.Marker({position: position , map: map, title: name})
             markers.push(mark);
           }else{
-            markers[idx].setPosition(pos);
+            markers[idx].setPosition(position);
           }
-          if(markerBounds.contains(pos)){
+          if(markerBounds.contains(position)){
             // do nothing
           }else{
-            markerBounds.extend(pos);
+            markerBounds.extend(position);
             map.fitBounds(markerBounds);
           }
 
