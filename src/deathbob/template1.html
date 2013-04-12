@@ -21,7 +21,7 @@
         var markers = [];
 
         function get_location(){
-          navigator.geolocation.watchPosition(show_map, handle_error, opts);
+          watch = navigator.geolocation.watchPosition(show_map, handle_error, opts);
         }
 
         function show_map(position){
@@ -97,6 +97,7 @@
             }
         }
         function handle_error(err){
+          console.log(err);
           if (err.code == 1){
           // user said no
           }
