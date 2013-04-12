@@ -24,34 +24,29 @@
         }
 
         function show_map(position){
-
           lat = position.coords.latitude;
           lng = position.coords.longitude;
           localStorage["lat"] = lat;
           localStorage["lng"] = lng;
           newLatLng = new google.maps.LatLng(lat, lng);
+          console.log("inside show_map");
+
           mark_position_for_name(newLatLng, name);
-          if(window.websocket === undefined){
-            openWebsocket();
-          }
 
           if (window.websocket.readyState == 1){
+            console.log("sending data");
             sendData();
-          }else if(window.websocket.readyState === 3){
-            window.websocket.close();
-            openWebsocket();
-            console.log("websocket not open");
+          }else{
+            watchWebsocket();
           }
-
-          console.log("inside show_map");
-          console.log([lat, lng]);
-
         }
 
         function sendData(){
           websocket.send("name " + name + " lat " + lat + " lng " + lng);
         }
+
         function mark_position_for_name(position, name){
+          console.log("Inside mark_position_for_name")
           var idx = find_index_of_name_in_markers(name);
           if(idx === -1){
             // couldn't find existing marker, make a new one
@@ -68,7 +63,6 @@
             mapBounds.extend(position);
             map.fitBounds(mapBounds);
           }
-
         }
 
         function find_index_of_name_in_markers(name){
@@ -78,6 +72,15 @@
           return -1;
         }
 
+        function watchWebsocket(){
+          if(window.websocket === undefined){
+            openWebsocket();
+          }else if(window.websocket.readyState === 3){
+            console.log("websocket not open");
+            window.websocket.close();
+            openWebsocket();
+          }
+        }
 
         function openWebsocket(){
             window.websocket = new WebSocket("ws://" + document.domain + "/ws");
@@ -96,6 +99,7 @@
               }
             }
         }
+
         function handle_error(err){
           console.log(err);
           if (err.code == 1){
@@ -110,6 +114,7 @@
           mapTypeId: google.maps.MapTypeId.ROADMAP
         };
         map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
+        watchWebsocket();
         get_location();
       }
 

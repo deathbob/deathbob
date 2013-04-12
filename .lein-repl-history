@@ -48,3 +48,14 @@ foo
 (vec foo)
 (defn bar [{channel [lat lng]}] (println lat))
 (defn bar [[channel [lat lng]]] (println lat))
+(def square[x] (* x x))
+(defn square[x] (* x x))
+(defn square-plus-one[x](+ 1 (square x)))
+(square-plus-one 3)
+(defn pally[arg]
+(let [name arg rev-name (reverse arg)]
+(println name)
+(println rev-name)
+))
+(pally "peter")
+(= "bob" "bob")
