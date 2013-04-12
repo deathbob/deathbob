@@ -15,7 +15,6 @@
         var lng = localStorage["lng"] || -73.0;
         var myLatlng = new google.maps.LatLng(lat, lng);
         var opts = {enableHighAccuracy: true, maximumAge: 2500}
-        var markerBounds = new google.maps.LatLngBounds();
         var map;
         var name = prompt("Who are you?", "nobody");
         var markers = [];
@@ -61,11 +60,13 @@
           }else{
             markers[idx].setPosition(position);
           }
-          if(markerBounds.contains(position)){
+          mapBounds = map.getBounds();
+
+          if(mapBounds.contains(position)){
             // do nothing
           }else{
-            markerBounds.extend(position);
-            map.fitBounds(markerBounds);
+            mapBounds.extend(position);
+            map.fitBounds(mapBounds);
           }
 
         }
