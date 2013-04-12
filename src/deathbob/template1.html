@@ -14,7 +14,7 @@
         var lat = localStorage["lat"] || 41.0;
         var lng = localStorage["lng"] || -73.0;
         var myLatlng = new google.maps.LatLng(lat, lng);
-        var opts = {enableHighAccuracy: true, maximumAge: 5000}
+        var opts = {enableHighAccuracy: true, maximumAge: 2500}
         var markerBounds = new google.maps.LatLngBounds();
         var map;
         var name = prompt("Who are you?", "nobody");
@@ -31,7 +31,7 @@
           localStorage["lat"] = lat;
           localStorage["lng"] = lng;
           newLatLng = new google.maps.LatLng(lat, lng);
-
+          mark_position_for_name(newLatLng, name);
           if(window.websocket === undefined){
             openWebsocket();
           }
@@ -44,12 +44,30 @@
             console.log("websocket not open");
           }
 
-          console.log(lat);
-          console.log(lng);
+          console.log("inside show_map");
+          console.log([lat, lng]);
+
         }
 
         function sendData(){
           websocket.send("name " + name + " lat " + lat + " lng " + lng);
+        }
+        function mark_position_for_name(position, name){
+          var idx = find_index_of_name_in_markers(name);
+          if(idx === -1){
+            // couldn't find existing marker, make a new one
+            var mark = new google.maps.Marker({position: pos , map: map, title: json.name})
+            markers.push(mark);
+          }else{
+            markers[idx].setPosition(pos);
+          }
+          if(markerBounds.contains(pos)){
+            // do nothing
+          }else{
+            markerBounds.extend(pos);
+            map.fitBounds(markerBounds);
+          }
+
         }
 
         function find_index_of_name_in_markers(name){
@@ -66,22 +84,11 @@
             window.websocket.onmessage = function(message){
               try {
                   var json = JSON.parse(message.data);
+                  console.log("Got data!");
+                  console.log(json);
                   var name = json.name;
-                  var idx = find_index_of_name_in_markers(name);
                   var pos = new google.maps.LatLng(json.lat, json.lng);
-                  if(idx === -1){
-                    // couldn't find existing marker, make a new one
-                    var mark = new google.maps.Marker({position: pos , map: map, title: json.name})
-                    markers.push(mark);
-                  }else{
-                    markers[idx].setPosition(pos);
-                  }
-                  if(markerBounds.contains(pos)){
-                    // do nothing
-                  }else{
-                    markerBounds.extend(pos);
-                    map.fitBounds(markerBounds);
-                  }
+                  mark_position_for_name(pos, name);
 
               } catch (e) {
                   console.log("This doesn't look like a valid JSON: ", message);
