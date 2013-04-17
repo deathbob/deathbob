@@ -86,13 +86,20 @@
         }
 
         function watchWebsocket(){
+          console.log("watching websocket");
           if(window.websocket === undefined){
             openWebsocket();
+          }else if(window.websocket.readyState === 0){
+            console.log("websocket is opening");
+          }else if(window.websocket.readyState === 1){
+            console.log("websocket is open hooray!");
+          }else if(window.websocket.readyState === 2){
+            console.log("websocket is closing");
           }else if(window.websocket.readyState === 3){
             console.log("websocket already closed");
             openWebsocket();
           }else{
-            console.log(websocket.readyState);
+            console.log("This should never happen...");
           }
         }
 
