@@ -9,11 +9,6 @@
 
 (def coords (atom {}));; hash-map
 
-def index(ctxt)
-  [:div#message].each do |x|
-    x.innner_html = ctxt[:message]
-  end
-end
 (html/deftemplate index "deathbob/template1.html"
   [ctxt]
   [:div#message] (html/content (:message ctxt)))
