@@ -14,7 +14,7 @@
         var lat = localStorage["lat"] || 41.0;
         var lng = localStorage["lng"] || -73.0;
         var myLatlng = new google.maps.LatLng(lat, lng);
-        var opts = {enableHighAccuracy: true, maximumAge: 2500}
+        var opts = {enableHighAccuracy: true, maximumAge: 4000, timeout: 5000}
         var map;
         var name = prompt("Who are you?", "nobody");
         var markers = [];
@@ -24,6 +24,7 @@
         }
 
         function submitAnyway(){
+          console.log("Submitting anyway");
           navigator.geolocation.getCurrentPosition(show_map, handle_error, opts);
         }
 
@@ -31,8 +32,6 @@
           console.log(err);
           if (err.code == 1){
           // user said no
-          }else{
-            console.log(err);
           }
         }
 
@@ -124,7 +123,7 @@
         map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
         openWebsocket();
         get_location();
-        intervalTimer = setInterval(submitAnyway, 5000);
+        intervalTimer = setInterval(submitAnyway, 10000);
       }
 
       google.maps.event.addDomListener(window, 'load', initialize);
