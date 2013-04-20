@@ -59,3 +59,13 @@ foo
 ))
 (pally "peter")
 (= "bob" "bob")
+(def ports (atom []))
+ports
+(swap! ports [900 800])
+(swap! ports conj [900 800])
+ports
+(swap! ports conj 900 800)
+(def foo [])
+(def bar (conj foo 8080 9090))
+bar
+(first bar)

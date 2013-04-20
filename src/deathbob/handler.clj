@@ -8,10 +8,14 @@
   (:use ring.adapter.jetty))
 
 (def coords (atom {}));; hash-map
+(def ports (atom []));; vector
 
 (html/deftemplate index "deathbob/template1.html"
   [ctxt]
-  [:div#message] (html/content (:message ctxt)))
+  [:div#message] (html/content (:message ctxt))
+  [:div#ws-port] (html/content (str (last @ports)))
+
+  )
 
 (defn position-handler [req]
   (with-channel req channel
@@ -41,9 +45,14 @@
   (handler/site main-routes))
 
 (defn -main []
-  (let [port (Integer/parseInt (or (System/getenv "PORT") "3001"))]
-    (println port)
-    (run-server (handler/site #'main-routes) {:port port})))
+  (let [port (Integer/parseInt (or (System/getenv "PORT") "3001"))
+        port-two (Integer/parseInt (or (System/getenv "PORT2") "3002"))
+        ]
+    (println (str "port" port " port-two " port-two))
+    (swap! ports conj port port-two)
+    (run-server (handler/site #'main-routes) {:port port})
+    (run-server (handler/site #'main-routes) {:port port-two})
+    ))
 
 
 ;; need to get all the google maps and jquery stuff downloaded so don't have to hit network for it.

@@ -107,7 +107,11 @@
         }
 
         function openWebsocket(){
-            window.websocket = new WebSocket("ws://" + location.host + "/ws");
+            var wsPort = $('#ws-port').html();
+            var ws = "ws://" + location.hostname + ":" + wsPort + "/ws"
+            console.log(ws);
+            window.websocket = new WebSocket(ws)
+//            window.websocket = new WebSocket("ws://" + location.host + "/ws");
             window.websocket.onmessage = function(message){
               try {
                   var json = JSON.parse(message.data);
@@ -156,6 +160,8 @@
     </span>
     websocket.readyState <span id='socketStatus' style='background-color:red'>
     </span>
+    <div id='ws-port'>
+    </div>
     <div id='message'>
     </div>
     <div id="map-canvas" style="width: 100%; height: 100%"></div>
