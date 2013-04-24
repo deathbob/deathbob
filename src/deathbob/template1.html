@@ -6,6 +6,7 @@
       body { height: 100%; margin: 0; padding: 0 }
       #map-canvas { height: 100% }
     </style>
+    <meta name="apple-mobile-web-app-capable" content="yes" />
 
     <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
     <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBMeQaETGjkZNtCwEMhdb_Mhs8mI-v05rw&sensor=true"></script>
@@ -16,8 +17,23 @@
         var myLatlng = new google.maps.LatLng(lat, lng);
         var opts = {enableHighAccuracy: true, maximumAge: 4000, timeout: 5000}
         var map;
-        var name = prompt("Who are you?", "nobody");
+        var name;
+
+        function changeName(n){
+          if(n === undefined){
+            name = prompt("Who are you?", "nobody");
+          }else{
+            name = n
+          }
+          name = name.split(' ')[0]
+          localStorage["name"] = name;
+        }
+
+        changeName(localStorage["name"]);
+
+
         var markers = [];
+
 
         function get_location(){
           watch = navigator.geolocation.watchPosition(show_map, handle_error, opts);
@@ -152,26 +168,15 @@
 
   </head>
   <body>
-    <div id='status'>
-    </div>
-    lastSent <span id='lastSent'>
-    </span>
-    lastReceived <span id='lastReceived'>
-    </span>
-    websocket.readyState <span id='socketStatus' style='background-color:red'>
-    </span>
-    <div id='ws-port'>
-    </div>
-    <div id='message'>
-    </div>
-    <div id="map-canvas" style="width: 100%; height: 100%"></div>
+    <div id="map-canvas" style="width: 100%; height: 100%"> </div>
 
-    <script>
-      $(function(){
-
-      });
-    </script>
+    <span id='status'> </span>
+    lastSent <span id='lastSent'> </span>
+    lastReceived <span id='lastReceived'> </span>
+    websocket.readyState <span id='socketStatus' style='background-color:red'> </span>
+    <span id='ws-port'></span>
+    <div id='message'> </div>
+    <a href='#' id='change-name' onClick='changeName()'>Change Name</a>
   </body>
-
 
 </html>

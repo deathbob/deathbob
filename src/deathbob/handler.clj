@@ -13,7 +13,7 @@
 (html/deftemplate index "deathbob/template1.html"
   [ctxt]
   [:div#message] (html/content (:message ctxt))
-  [:div#ws-port] (html/content (str (last @ports)))
+  [:span#ws-port] (html/content (str (last @ports)))
 
   )
 
