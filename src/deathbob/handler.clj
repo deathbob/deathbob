@@ -40,6 +40,7 @@
 (defroutes main-routes
   (GET "/" {params :params} (index params))
   (GET "/ws" [] position-handler)
+  (route/resources "/")
   (route/not-found "<h1>Page not found</h1>"))
 
 

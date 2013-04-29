@@ -10,5 +10,4 @@
                  ]
   :plugins [[lein-ring "0.8.3"]]
   :min-lein-version "2.0.0"
-  :ring {:handler deathbob.handler/app}
   :main deathbob.handler)
