@@ -128,14 +128,14 @@ function watchWebsocket(){
   }else{
     console.log("This should never happen...");
   }
-}
+};
 
 function googleIt(str){
   // need to encode str and append it to following
   var customSearch = "https://www.googleapis.com/customsearch/v1?key=AIzaSyBMeQaETGjkZNtCwEMhdb_Mhs8mI-v05rw&cx=000707085635839138990:4pnbfnwmrka&q="
   // do a get against customSearch + encoded str
 
-}
+};
 
 function openWebsocket(){
   var wsPort = $('#ws-port').html();
@@ -172,7 +172,7 @@ function showMessage(json){
     newMess.prepend(newImg);
     $("#messages").prepend(newMess);
   }
-}
+};
 
 function markGivenLocation(){
   var address = $('#searcher').val();
@@ -192,7 +192,7 @@ function markGivenLocation(){
       }
     });
   }
-}
+};
 
 function initialize() {
   mapOptions = {
@@ -210,6 +210,6 @@ function initialize() {
     $('#socketStatus').html(window.websocket.readyState);
     $('#socketStatus').hide().fadeIn(1000);
   }, 5000);
-}
+};
 
 google.maps.event.addDomListener(window, 'load', initialize);
