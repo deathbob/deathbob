@@ -5,6 +5,7 @@
       html { height: 100% }
       body { height: 100%; margin: 0; padding: 0 }
       #map-canvas { height: 100% }
+      li {list-style-type: none}
     </style>
     <meta name="apple-mobile-web-app-capable" content="yes" />
 
@@ -16,6 +17,8 @@
         var lng = localStorage["lng"] || -73.0;
         var myLatlng = new google.maps.LatLng(lat, lng);
         var opts = {enableHighAccuracy: true, maximumAge: 4000, timeout: 5000}
+        var colors = ['red', 'blue', 'green', 'yellow', 'orange', 'purple'];
+        var color = colors[Math.floor(Math.random()*colors.length)];
         var map;
         var name;
 
@@ -59,7 +62,7 @@
           newLatLng = new google.maps.LatLng(lat, lng);
           console.log("inside show_map");
 
-          mark_position_for_name(newLatLng, name);
+          mark_position_for_name(newLatLng, name, color);
 
           if (window.websocket.readyState == 1){
             console.log("sending data");
@@ -74,15 +77,33 @@
           var foo = new Date();
           $("lastSent").html(foo);
           $("#status").html("Sending Data");
-          websocket.send("name " + name + " lat " + lat + " lng " + lng);
+
+          var toSend = JSON.stringify({name: name, lat: lat, lng: lng, color: color});
+          websocket.send(toSend);
         }
 
-        function mark_position_for_name(position, name){
+      function sendMessage(){
+          console.log("sending message");
+          message = $("#message").val();
+          var toSend = JSON.stringify({name: name, lat: lat, lng: lng, message: message, color: color});
+          websocket.send(toSend);
+      }
+
+
+        function mark_position_for_name(position, name, color){
           console.log("Inside mark_position_for_name")
           var idx = find_index_of_name_in_markers(name);
           if(idx === -1){
             // couldn't find existing marker, make a new one
-            var mark = new google.maps.Marker({position: position , map: map, title: name})
+
+            image = "http://www.google.com/intl/en_us/mapfiles/ms/micons/XXX-dot.png".replace("XXX", color);
+            marker_options = {
+              position: position,
+              map: map,
+              title: name,
+              icon: image
+          }
+            var mark = new google.maps.Marker(marker_options)
             markers.push(mark);
           }else{
             markers[idx].setPosition(position);
@@ -143,15 +164,28 @@ var customSearch = "https://www.googleapis.com/customsearch/v1?key=AIzaSyBMeQaET
                   $("#lastReceived").html(foo);
                   console.log(json);
                   var name = json.name;
+                  var clr = json.color;
                   var pos = new google.maps.LatLng(json.lat, json.lng);
-                  mark_position_for_name(pos, name);
-
+                  mark_position_for_name(pos, name, clr);
+                  showMessage(json);
               } catch (e) {
                   console.log("This doesn't look like a valid JSON: ", message);
                   return;
               }
             }
+        };
+
+
+      function showMessage(json){
+        var mess = json.message
+        if((mess !== undefined) && (mess !== "")){
+          var newMess = $("<li>" + json.name + ": " + mess + "</li>");
+          image = "http://www.google.com/intl/en_us/mapfiles/ms/micons/XXX-dot.png".replace("XXX", json.color);
+          var newImg = $("<img src='" + image + "'/>");
+          newMess.prepend(newImg);
+          $("#messages").prepend(newMess);
         }
+      }
 
       function markGivenLocation(){
         var address = $('#searcher').val();
@@ -200,6 +234,13 @@ var customSearch = "https://www.googleapis.com/customsearch/v1?key=AIzaSyBMeQaET
       <input id='searcher' type='search'/>
       <a href='#' id='searcher-click' onClick='markGivenLocation()'>Mark it!</a>
     </div>
+
+    <div id='chat'>
+      <input id='message'/>
+      <a href='#' id='submit-chat' onClick='sendMessage()'>Chat!</a>
+      <ol id='messages'></ol>
+    </div>
+
 
     <div id="map-canvas" style="width: 100%; height: 100%"> </div>
 

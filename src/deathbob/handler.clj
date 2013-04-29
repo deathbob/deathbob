@@ -23,16 +23,18 @@
                         (swap! coords dissoc channel)
                         (println "channel closed: " status)))
     (on-receive channel (fn [data]
-                          (let [data-as-map (apply hash-map (clojure.string/split data #"\s"))
-                                name (get data-as-map "name")
-                                lat (get data-as-map "lat")
-                                lng (get data-as-map "lng")]
+                          (println data)
+                          (let [data-as-map (json/read-str data :key-fn keyword)
+                                name (data-as-map :name)
+                                lat (data-as-map :lat)
+                                lng (data-as-map :lng)
+                                message (data-as-map :message)]
                             (println (str name " " lat " " lng))
                             (swap! coords assoc channel [lat lng name])
                             (println @coords)
-                            (let [json (json/write-str {:name name :lat lat :lng lng})]
-                              (doall (map (fn[x](send! x json)) (keys @coords))))
-                            )))))
+                            (println message)
+                            (doall (map (fn[x](send! x data)) (keys @coords)))
+                          )))))
 
 
 (defroutes main-routes
