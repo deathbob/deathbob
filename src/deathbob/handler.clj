@@ -6,7 +6,7 @@
   (:require [net.cgrand.enlive-html :as html])
   (:require [clojure.data.json :as json])
   (:require [ring.middleware.reload :as reload])
-)
+  )
 
 (def coords (atom {}));; hash-map
 (def ports (atom []));; vector
@@ -17,6 +17,7 @@
   [:span#ws-port] (html/content (str (last @ports)))
   )
 
+
 (defn position-handler [req]
   (with-channel req channel
     (on-close channel (fn [status]
@@ -25,10 +26,12 @@
     (on-receive channel (fn [data]
                           (let [data-as-map (json/read-str data :key-fn keyword)]
                             (println data)
-                            (swap! coords assoc channel data-as-map)
+                            (if (data-as-map :target)
+                              (println (data-as-map :target))
+                              (swap! coords assoc channel data-as-map))
                             (println @coords)
                             (doall (map (fn[x](send! x data)) (keys @coords)))
-                          )))))
+                            )))))
 
 
 (defroutes main-routes

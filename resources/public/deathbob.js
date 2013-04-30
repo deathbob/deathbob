@@ -4,8 +4,9 @@ var lat = localStorage["lat"] || 41.0;
 var lng = localStorage["lng"] || -73.0;
 var myLatlng = new google.maps.LatLng(lat, lng);
 var opts = {enableHighAccuracy: true, maximumAge: 4000, timeout: 5000}
-var colors = ['red', 'blue', 'green', 'yellow', 'orange', 'purple'];
+var colors = ['blue', 'green', 'yellow', 'orange', 'purple'];
 var color = colors[Math.floor(Math.random()*colors.length)];
+var target;
 var map;
 var name;
 
@@ -65,7 +66,8 @@ function sendData(){
   $("lastSent").html(foo);
   $("#status").html("Sending Data");
 
-  var toSend = JSON.stringify({name: name, lat: lat, lng: lng, color: color});
+
+  var toSend = JSON.stringify({name: name, lat: lat, lng: lng, color: color, target: target});
   websocket.send(toSend);
 }
 
@@ -150,11 +152,9 @@ function openWebsocket(){
       var foo = new Date();
       $("#lastReceived").html(foo);
       console.log(json);
-      var name = json.name;
-      var clr = json.color;
-      var pos = new google.maps.LatLng(json.lat, json.lng);
-      mark_position_for_name(pos, name, clr);
+      showPosition(json);
       showMessage(json);
+      showTarget(json);
     } catch (e) {
       console.log("This doesn't look like a valid JSON: ", message);
       return;
@@ -162,6 +162,22 @@ function openWebsocket(){
   }
 };
 
+function showPosition(json){
+  var name = json.name;
+  var clr = json.color;
+  if ((clr !== undefined) && (clr !== "")){
+    var pos = new google.maps.LatLng(json.lat, json.lng);
+    mark_position_for_name(pos, name, clr);
+  }
+}
+
+function showTarget(json){
+  var target = json.target;
+  if((target !== undefined) && (target !== "")){
+    var pos = new google.maps.LatLng(target.lat, target.lng);
+    mark_position_for_name(pos, target.name, 'red');
+  }
+}
 
 function showMessage(json){
   var mess = json.message
@@ -170,6 +186,9 @@ function showMessage(json){
     image = "http://www.google.com/intl/en_us/mapfiles/ms/micons/XXX-dot.png".replace("XXX", json.color);
     var newImg = $("<img src='" + image + "'/>");
     newMess.prepend(newImg);
+    if ($("#messages li").length > 5){
+      $("#messages li").last().hide();
+    }
     $("#messages").prepend(newMess);
   }
 };
@@ -187,6 +206,13 @@ function markGivenLocation(){
           map: map,
           position: results[0].geometry.location
         });
+        var lt, lg;
+        lt = results[0].geometry.location.lat();
+        lg = results[0].geometry.location.lng();
+
+        target = {target: {name: "Target " + name, lat: lt, lng: lg}};
+        var toSend = JSON.stringify(target);
+        websocket.send(toSend);
       } else {
         alert("Geocode was not successful for the following reason: " + status);
       }
