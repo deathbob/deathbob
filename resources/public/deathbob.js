@@ -99,12 +99,15 @@ function mark_position_for_name(position, name, color){
   }
   mapBounds = map.getBounds();
 
-  if(mapBounds.contains(position)){
-    // do nothing
-  }else{
-    mapBounds.extend(position);
-    map.fitBounds(mapBounds);
-  }
+// for some reason the "target" never seems to be inside the bounds.
+// so it keeps calling this and extending the bounds until the call stack overflows.
+// wtf :(
+//  if(mapBounds.contains(position)){
+//    // do nothing
+//  }else{
+//    mapBounds.extend(position);
+//    map.fitBounds(mapBounds);
+//  }
 }
 
 function find_index_of_name_in_markers(name){
@@ -153,8 +156,11 @@ function openWebsocket(){
       $("#lastReceived").html(foo);
       console.log(json);
       showPosition(json);
+      console.log("showed position");
       showMessage(json);
+      console.log("showed message");
       showTarget(json);
+      console.log("showed target");
     } catch (e) {
       console.log("This doesn't look like a valid JSON: ", message);
       return;

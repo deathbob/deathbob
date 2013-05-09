@@ -18,6 +18,11 @@
   )
 
 
+(defn coords-as-json []
+;  (json/write-str (into {} (for [[k v] @coords] [(str (v :name) "-" (v :color)) v]))))
+  (json/write-str (into [] (for [[k v] @coords] v))))
+
+
 (defn position-handler [req]
   (with-channel req channel
     (on-close channel (fn [status]
@@ -29,8 +34,9 @@
                             (if (data-as-map :target)
                               (println (data-as-map :target))
                               (swap! coords assoc channel data-as-map))
-                            (println @coords)
+                            (println (coords-as-json))
                             (doall (map (fn[x](send! x data)) (keys @coords)))
+;                            (doall (map (fn[x](send! x (coords-as-json))) (keys @coords)))
                             )))))
 
 
